@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="The Kunix Project - Your on-ramp to the Information Superhighway">
+    <title>The Kunix Project</title>
+    <style>
+        body {
+            font-family: Times, "Times New Roman", serif;
+            background-color: #ffffff;
+            color: #000000;
+            margin: 0;
+            line-height: 1.4;
+        }
+        
+        .sidebar {
+            width: 200px;
+            background-color: var(--sidebar-bg);
+            border-right: 1px solid var(--border-color);
+            min-height: 100vh;
+            padding: 20px;
+            position: fixed;
+            left: -200px;
+            top: 0;
+            transition: left 0.3s ease;
+            z-index: 999;
+            box-sizing: border-box;
+        }
+        
+        .sidebar.expanded {
+            left: 0;
+        }
+        
+        .sidebar-toggle {
+            position: fixed;
+            left: 10px;
+            top: 10px;
+            background: var(--bg-color);
+            border: 1px solid var(--border-color);
+            color: var(--text-color);
+            padding: 5px 10px;
+            cursor: pointer;
+            font-family: Times, "Times New Roman", serif;
+            z-index: 1000;
+        }
+        
+        .theme-toggle {
+            position: fixed;
+            right: 10px;
+            top: 10px;
+            background: none;
+            border: none;
+            color: var(--text-color);
+            cursor: pointer;
+            font-family: Times, "Times New Roman", serif;
+            text-decoration: underline;
+            z-index: 1000;
+        }
+        
+        .sidebar h3 {
+            margin-top: 0;
+            font-size: 16px;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 5px;
+            color: var(--text-color);
+        }
+        
+        .sidebar ul {
+            list-style: none;
+            padding: 0;
+            margin: 15px 0;
+        }
+        
+        .sidebar li {
+            margin: 8px 0;
+        }
+        
+        .sidebar a {
+            color: var(--text-color);
+            text-decoration: underline;
+            font-size: 14px;
+        }
+        
+        .sidebar a:hover {
+            font-weight: bold;
+        }
+        
+        .content {
+            margin: 40px;
+            max-width: calc(100vw - 80px);
+            box-sizing: border-box;
+        }
+        
+        .sidebar-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.3);
+            z-index: 998;
+            display: none;
+        }
+        
+        .sidebar-overlay.active {
+            display: block;
+        }
+        
+        /* Light mode (default) */
+        :root {
+            --bg-color: #ffffff;
+            --text-color: #000000;
+            --border-color: #000000;
+            --sidebar-bg: #f0f0f0;
+        }
+        
+        /* Dark mode */
+        body.dark-mode {
+            --bg-color: #000000;
+            --text-color: #ffffff;
+            --border-color: #ffffff;
+            --sidebar-bg: #1a1a1a;
+        }
+        
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+        }
+        
+        header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+        
+        h1 {
+            font-size: 24px;
+            margin: 20px 0 10px 0;
+        }
+        
+        h2 {
+            font-size: 18px;
+            font-weight: normal;
+            margin: 10px 0 20px 0;
+        }
+        
+        h3 {
+            font-size: 16px;
+            margin: 30px 0 15px 0;
+        }
+        
+        h4 {
+            font-size: 14px;
+            margin: 20px 0 10px 0;
+        }
+        
+        section {
+            margin-bottom: 40px;
+        }
+        
+        p {
+            margin: 15px 0;
+        }
+        
+        ul, ol {
+            margin: 15px 0;
+            padding-left: 40px;
+        }
+        
+        li {
+            margin: 5px 0;
+        }
+        
+        dl {
+            margin: 15px 0;
+        }
+        
+        dt {
+            font-weight: bold;
+            margin-top: 10px;
+        }
+        
+        dd {
+            margin: 5px 0 10px 20px;
+        }
+        
+        footer {
+            margin-top: 50px;
+            font-size: 12px;
+            text-align: center;
+        }
+        
+        hr {
+            margin: 30px 0;
+        }
+    </style>
+</head>
+<body>
+    <button class="sidebar-toggle" onclick="toggleSidebar()">☰ Menu</button>
+    <button class="theme-toggle" onclick="toggleTheme()" id="themeToggle">Dark Mode</button>
+    
+    <div class="sidebar-overlay" id="sidebarOverlay" onclick="closeSidebar()"></div>
+    
+    <div class="sidebar" id="sidebar">
+        <h3>Navigation</h3>
+        <ul>
+            <li><a href="#about" onclick="closeSidebar()">About Kunix</a></li>
+            <li><a href="#philosophy" onclick="closeSidebar()">Design Philosophy</a></li>
+            <li><a href="#features" onclick="closeSidebar()">Key Features</a></li>
+            <li><a href="#tools" onclick="closeSidebar()">Development Tools</a></li>
+            <li><a href="#requirements" onclick="closeSidebar()">System Requirements</a></li>
+            <li><a href="#download" onclick="closeSidebar()">Get Started</a></li>
+            <li><a href="#community" onclick="closeSidebar()">Community</a></li>
+        </ul>
+    </div>
+    
+    <div class="content">
+        <header>
+            <h1>
+                The <i>Kunix</i> PROJECT
+            </h1>
+            <h2>Your on-ramp to the <i>Information Superhighway</i></h2>
+        </header>
+        
+        <main>
+            <section id="about">
+                <h3>About Kunix</h3>
+                <p>Welcome to the future of computing. Kunix is a revolutionary operating system designed for the modern digital pioneer. Built from the ground up with performance, security, and user experience in mind.</p>
+                
+                <p>Whether you're a seasoned system administrator, a curious developer, or someone ready to explore beyond traditional computing boundaries, Kunix offers the tools and flexibility you need to navigate the ever-expanding digital landscape.</p>
+                
+                <p>Kunix embraces the philosophy that software should be simple, powerful, and composable. Every component serves a specific purpose and works harmoniously with others. The system rewards understanding and provides the user with complete control over their computing environment.</p>
+                
+                <p>At its core, Kunix is built around the principle of "small tools, big results." Rather than monolithic applications that attempt to do everything, Kunix provides a rich ecosystem of focused utilities that can be combined in countless ways to accomplish complex tasks.</p>
+            </section>
+            
+            <section id="philosophy">
+                <h3>Design Philosophy</h3>
+                <p>Kunix follows several key principles that guide its development:</p>
+                
+                <p><strong>Simplicity:</strong> Each program should do one thing and do it well. Complexity is the enemy of reliability and security.</p>
+                
+                <p><strong>Transparency:</strong> The system should be understandable. Users should be able to see what's happening and why through clear documentation and intuitive behavior.</p>
+                
+                <p><strong>Modularity:</strong> Components should be independent and interchangeable. This makes the system more robust and easier to maintain.</p>
+                
+                <p><strong>Text Streams:</strong> Data should flow between programs as text streams whenever possible, making them composable and debuggable.</p>
+                
+                <p><strong>User Empowerment:</strong> The system should provide mechanisms for users to build their own solutions and customize their environment to meet specific needs.</p>
+            </section>
+            
+            <section id="features">
+                <h3>Key Features</h3>
+                <ul>
+                    <li><strong>Lightning-fast boot times</strong> - Get up and running in seconds. Kunix's streamlined kernel and efficient service management mean you spend less time waiting and more time working.</li>
+                    <li><strong>Advanced security architecture</strong> - Built-in protection against modern threats. Mandatory access controls, process isolation, and cryptographic verification are integrated throughout the system.</li>
+                    <li><strong>Intuitive interface</strong> - Powerful yet accessible for users of all skill levels. The command line and graphical interfaces complement each other, giving you the right tool for every task.</li>
+                    <li><strong>Extensive compatibility</strong> - Run your favorite applications seamlessly. Compatibility layers ensure your existing workflows continue uninterrupted while you explore new possibilities.</li>
+                    <li><strong>Proprietary development model</strong> - Focused innovation with potential for future community involvement. The development team maintains tight control over quality and direction while exploring possibilities for broader collaboration.</li>
+                    <li><strong>Resource efficient</strong> - Optimal performance on both new and legacy hardware. Kunix runs smoothly on everything from embedded devices to high-performance servers.</li>
+                </ul>
+                
+                <h4>System Architecture</h4>
+                <p>Kunix features a monolithic kernel design that provides excellent performance and tight integration between system components. Device drivers, file systems, and network protocols run in kernel space with direct access to hardware, ensuring minimal overhead and maximum efficiency.</p>
+                
+                <p>The userland is built around the concept of pipes and filters. Programs read from standard input, write to standard output, and can be chained together to create powerful processing pipelines. This makes complex data manipulation tasks both simple to express and efficient to execute.</p>
+            </section>
+            
+            <section id="tools">
+                <h3>Development Tools</h3>
+                <p>Kunix comes with a comprehensive suite of development tools designed for both system programming and application development:</p>
+                
+                <p><strong>Text Processing:</strong> A rich set of utilities for manipulating text files, extracting data, and transforming formats. These tools excel at log analysis, configuration management, and data processing tasks.</p>
+                
+                <p><strong>Shell Environment:</strong> A powerful command interpreter that supports scripting, job control, and interactive use. The shell provides sophisticated pattern matching, variable substitution, and control flow constructs.</p>
+                
+                <p><strong>Compilation System:</strong> Native support for multiple programming languages with optimizing compilers, debuggers, and profiling tools. The build system scales from simple scripts to complex multi-target projects.</p>
+                
+                <p><strong>Network Utilities:</strong> Built-in tools for network configuration, monitoring, and troubleshooting. From simple connectivity tests to complex protocol analysis, the tools you need are included.</p>
+            </section>
+            
+            <section id="requirements">
+                <h3>System Requirements (Subject to change once out of alpha)</h3>
+                <dl>
+                    <dt>Processor:</dt>
+                    <dd>x86 compatible</dd>
+                   
+                    <dt>Memory:</dt>
+                    <dd>64 MB minimum, 1 GB Recommended</dd>
+                   
+                    <dt>Storage:</dt>
+                    <dd>100 MB available disk space</dd>
+                   
+                    <dt>Network:</dt>
+                    <dd>Ethernet or Wi-Fi capability for updates and online features</dd>
+                </dl>
+            </section>
+            
+            <section id="download">
+                <h3>Get Started</h3>
+                <p>Ready to embark on your journey? Kunix is currently in active development with regular alpha releases (soon to be) available to early adopters and testers.</p>
+                
+                <h4>Download Options (DATE TBD)</h4>
+                <ul>
+                    <li><strong>Stable Release</strong> - Recommended for general use</li>
+                    <li><strong>Beta Channel</strong> - Latest features with testing for qualified participants</li>
+                    <li><strong>Development Builds</strong> - Cutting-edge updates for development partners</li>
+                </ul>
+                
+                <p><em>Installation guides and documentation will be available upon release.</em></p>
+            </section>
+            
+            <section id="community">
+                <h3>Community</h3>
+                <p><a href="forums.html">Join the community of users (soon to be, anyway) and developers who are shaping the future of computing. Whether you want to report bugs, provide feedback, or simply connect with fellow enthusiasts, there's a place for you in the Kunix community.</a></p>
+            </section>
+        </main>
+        
+        <footer>
+            <p>&copy; 2025 Klondike Software</p>
+        </footer>
+    </div>
+    
+    <script>
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('sidebarOverlay');
+            
+            sidebar.classList.toggle('expanded');
+            overlay.classList.toggle('active');
+        }
+        
+        function closeSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('sidebarOverlay');
+            
+            sidebar.classList.remove('expanded');
+            overlay.classList.remove('active');
+        }
+        
+        function toggleTheme() {
+            const body = document.body;
+            const themeToggle = document.getElementById('themeToggle');
+            
+            body.classList.toggle('dark-mode');
+            
+            if (body.classList.contains('dark-mode')) {
+                themeToggle.textContent = 'Light Mode';
+                localStorage.setItem('theme', 'dark');
+            } else {
+                themeToggle.textContent = 'Dark Mode';
+                localStorage.setItem('theme', 'light');
+            }
+        }
+        
+        // Load saved theme on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            const savedTheme = localStorage.getItem('theme');
+            const themeToggle = document.getElementById('themeToggle');
+            
+            if (savedTheme === 'dark') {
+                document.body.classList.add('dark-mode');
+                themeToggle.textContent = 'Light Mode';
+            }
+        });
+        
+        // Close sidebar when pressing Escape key
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                closeSidebar();
+            }
+        });
+    </script>
+</body>
+</html>
