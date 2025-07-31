@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <meta name="google-site-verification" content="yR2chWzds-qpnVess7TfNvN8MICUdPQ7P_gh_So0-1M" />
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="The Kunix Project - Your on-ramp to the Information Superhighway">
@@ -145,12 +146,6 @@
         .header-logo {
             height: 200px;
             width: auto;
-            /* Invert logo colors in dark mode */
-            filter: var(--logo-filter, none);
-        }
-        
-        body.dark-mode .header-logo {
-            --logo-filter: invert(1);
         }
         
         h1 {
@@ -249,10 +244,12 @@
     <div class="content">
         <header>
             <div class="header-logo-title">
-                <img src="K.png" alt="Kunix Logo" class="header-logo">
+                <img src="K.png" alt="Kunix Logo" class="header-logo" id="logoImg">
                 <h1>The <i>Kunix</i> PROJECT</h1>
             </div>
             <h2>Your on-ramp to the <i>Information Superhighway</i></h2>
+            <img alt="Static Badge" src="https://img.shields.io/badge/Version-Kodiak-blue?style=plastic"> <img alt="Static Badge" src="https://img.shields.io/badge/Release_Date-Christmas-darkgreen?style=plastic"> <img alt="Static Badge" src="https://img.shields.io/badge/Development_Stage-Pre_Alpha-red?style=plastic">
+
         </header>
         
         <main>
@@ -374,14 +371,17 @@
         function toggleTheme() {
             const body = document.body;
             const themeToggle = document.getElementById('themeToggle');
+            const logoImg = document.getElementById('logoImg');
             
             body.classList.toggle('dark-mode');
             
             if (body.classList.contains('dark-mode')) {
                 themeToggle.textContent = 'Light Mode';
+                logoImg.src = 'K(1).png';
                 localStorage.setItem('theme', 'dark');
             } else {
                 themeToggle.textContent = 'Dark Mode';
+                logoImg.src = 'K.png';
                 localStorage.setItem('theme', 'light');
             }
         }
@@ -390,10 +390,12 @@
         document.addEventListener('DOMContentLoaded', function() {
             const savedTheme = localStorage.getItem('theme');
             const themeToggle = document.getElementById('themeToggle');
+            const logoImg = document.getElementById('logoImg');
             
             if (savedTheme === 'dark') {
                 document.body.classList.add('dark-mode');
                 themeToggle.textContent = 'Light Mode';
+                logoImg.src = 'K(1).png';
             }
         });
         
