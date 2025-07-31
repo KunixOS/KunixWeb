@@ -146,12 +146,6 @@
         .header-logo {
             height: 200px;
             width: auto;
-            /* Invert logo colors in dark mode */
-            filter: var(--logo-filter, none);
-        }
-        
-        body.dark-mode .header-logo {
-            --logo-filter: invert(1);
         }
         
         h1 {
@@ -376,14 +370,17 @@
         function toggleTheme() {
             const body = document.body;
             const themeToggle = document.getElementById('themeToggle');
+            const logoImg = document.getElementById('logoImg');
             
             body.classList.toggle('dark-mode');
             
             if (body.classList.contains('dark-mode')) {
                 themeToggle.textContent = 'Light Mode';
+                logoImg.src = 'K(1).png';
                 localStorage.setItem('theme', 'dark');
             } else {
                 themeToggle.textContent = 'Dark Mode';
+                logoImg.src = 'K.png';
                 localStorage.setItem('theme', 'light');
             }
         }
@@ -392,10 +389,12 @@
         document.addEventListener('DOMContentLoaded', function() {
             const savedTheme = localStorage.getItem('theme');
             const themeToggle = document.getElementById('themeToggle');
+            const logoImg = document.getElementById('logoImg');
             
             if (savedTheme === 'dark') {
                 document.body.classList.add('dark-mode');
                 themeToggle.textContent = 'Light Mode';
+                logoImg.src = 'K(1).png';
             }
         });
         
