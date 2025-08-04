@@ -406,7 +406,7 @@
     
     <script>
         // Blog posts data - add new posts to the beginning of this array
-        const blogPosts = [
+       const blogPosts = [
             {
                 id: 'Kunix 0.0.0-b R1',
                 title: 'Kunix 0.0.0-Beta Revision 1',
@@ -454,7 +454,8 @@
         let currentView = 'blog';
         
         function formatDate(dateString) {
-            const date = new Date(dateString);
+            const [year, month, day] = dateString.split('-');
+            const date = new Date(year, month - 1, day);
             return date.toLocaleDateString('en-US', { 
                 year: 'numeric', 
                 month: 'long', 
