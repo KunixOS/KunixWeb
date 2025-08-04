@@ -1,0 +1,645 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Kunix Development Blog - Updates, releases, and thoughts on operating system development">
+    <title>Kunix Development Blog</title>
+    <style>
+        body {
+            font-family: Times, "Times New Roman", serif;
+            background-color: #ffffff;
+            color: #000000;
+            margin: 0;
+            line-height: 1.4;
+        }
+        
+        .sidebar {
+            width: 200px;
+            background-color: var(--sidebar-bg);
+            border-right: 1px solid var(--border-color);
+            min-height: 100vh;
+            padding: 20px;
+            position: fixed;
+            left: -200px;
+            top: 0;
+            transition: left 0.3s ease;
+            z-index: 999;
+            box-sizing: border-box;
+        }
+        
+        .sidebar.expanded {
+            left: 0;
+        }
+        
+        .sidebar-toggle {
+            position: fixed;
+            left: 10px;
+            top: 10px;
+            background: var(--bg-color);
+            border: 1px solid var(--border-color);
+            color: var(--text-color);
+            padding: 5px 10px;
+            cursor: pointer;
+            font-family: Times, "Times New Roman", serif;
+            z-index: 1000;
+        }
+        
+        .theme-toggle {
+            position: fixed;
+            right: 10px;
+            top: 10px;
+            background: none;
+            border: none;
+            color: var(--text-color);
+            cursor: pointer;
+            font-family: Times, "Times New Roman", serif;
+            text-decoration: underline;
+            z-index: 1000;
+        }
+        
+        .sidebar h3 {
+            margin-top: 0;
+            font-size: 16px;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 5px;
+            color: var(--text-color);
+        }
+        
+        .sidebar ul {
+            list-style: none;
+            padding: 0;
+            margin: 15px 0;
+        }
+        
+        .sidebar li {
+            margin: 8px 0;
+        }
+        
+        .sidebar a {
+            color: var(--text-color);
+            text-decoration: underline;
+            font-size: 14px;
+            cursor: pointer;
+        }
+        
+        .sidebar a:hover {
+            font-weight: bold;
+        }
+        
+        .content {
+            margin: 40px;
+            max-width: calc(100vw - 80px);
+            box-sizing: border-box;
+        }
+        
+        .sidebar-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.3);
+            z-index: 998;
+            display: none;
+        }
+        
+        .sidebar-overlay.active {
+            display: block;
+        }
+        
+        /* Light mode (default) */
+        :root {
+            --bg-color: #ffffff;
+            --text-color: #000000;
+            --border-color: #000000;
+            --sidebar-bg: #f0f0f0;
+        }
+        
+        /* Dark mode */
+        body.dark-mode {
+            --bg-color: #000000;
+            --text-color: #ffffff;
+            --border-color: #ffffff;
+            --sidebar-bg: #1a1a1a;
+        }
+        
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+        }
+        
+        header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+        
+        .header-logo-title {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+            flex-wrap: wrap;
+            margin: 20px 0 10px 0;
+        }
+        
+        .header-logo {
+            height: 60px;
+            width: auto;
+        }
+        
+        h1 {
+            font-size: 24px;
+            margin: 0;
+        }
+        
+        h2 {
+            font-size: 18px;
+            font-weight: normal;
+            margin: 10px 0 20px 0;
+        }
+        
+        h3 {
+            font-size: 16px;
+            margin: 30px 0 15px 0;
+        }
+        
+        h4 {
+            font-size: 14px;
+            margin: 20px 0 10px 0;
+        }
+        
+        .blog-controls {
+            margin-bottom: 30px;
+            text-align: center;
+        }
+        
+        .view-toggle {
+            background: var(--bg-color);
+            border: 1px solid var(--border-color);
+            color: var(--text-color);
+            padding: 8px 16px;
+            margin: 0 5px;
+            cursor: pointer;
+            font-family: Times, "Times New Roman", serif;
+        }
+        
+        .view-toggle.active {
+            background: var(--text-color);
+            color: var(--bg-color);
+        }
+        
+        .blog-post {
+            border-bottom: 1px solid var(--border-color);
+            padding: 20px 0;
+            margin-bottom: 20px;
+        }
+        
+        .blog-post:last-child {
+            border-bottom: none;
+        }
+        
+        .blog-post.hidden {
+            display: none;
+        }
+        
+        .post-header {
+            margin-bottom: 15px;
+        }
+        
+        .post-title {
+            font-size: 18px;
+            font-weight: bold;
+            margin: 0 0 5px 0;
+        }
+        
+        .post-meta {
+            font-size: 14px;
+            color: var(--text-color);
+            opacity: 0.7;
+            margin: 0 0 10px 0;
+        }
+        
+        .post-excerpt {
+            margin: 10px 0;
+        }
+        
+        .read-more {
+            color: var(--text-color);
+            text-decoration: underline;
+            cursor: pointer;
+            font-size: 14px;
+        }
+        
+        .read-more:hover {
+            font-weight: bold;
+        }
+        
+        .post-content {
+            display: none;
+            margin-top: 15px;
+        }
+        
+        .post-content.expanded {
+            display: block;
+        }
+        
+        .post-content p {
+            margin: 15px 0;
+        }
+        
+        .post-content ul {
+            margin: 15px 0;
+            padding-left: 40px;
+        }
+        
+        .post-content li {
+            margin: 5px 0;
+        }
+        
+        .archive-view {
+            display: none;
+        }
+        
+        .archive-view.active {
+            display: block;
+        }
+        
+        .blog-view {
+            display: block;
+        }
+        
+        .blog-view.hidden {
+            display: none;
+        }
+        
+        .year-section {
+            margin-bottom: 30px;
+        }
+        
+        .year-header {
+            font-size: 20px;
+            font-weight: bold;
+            margin-bottom: 15px;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 5px;
+        }
+        
+        .archive-post {
+            margin: 10px 0;
+            padding: 15px;
+            border: 1px solid var(--border-color);
+        }
+        
+        .archive-date {
+            font-weight: bold;
+            margin-bottom: 5px;
+            font-size: 14px;
+        }
+        
+        .archive-title {
+            color: var(--text-color);
+            text-decoration: underline;
+            cursor: pointer;
+            margin-bottom: 5px;
+        }
+        
+        .archive-title:hover {
+            font-weight: bold;
+        }
+        
+        .archive-excerpt {
+            font-size: 14px;
+            margin-top: 5px;
+            opacity: 0.8;
+        }
+        
+        .filter-info {
+            text-align: center;
+            margin-bottom: 20px;
+            font-style: italic;
+            opacity: 0.8;
+        }
+        
+        footer {
+            margin-top: 50px;
+            font-size: 12px;
+            text-align: center;
+        }
+        
+        footer a {
+            color: var(--text-color);
+            text-decoration: underline;
+        }
+        
+        /* Responsive adjustments */
+        @media (max-width: 600px) {
+            .header-logo-title {
+                flex-direction: column;
+                gap: 10px;
+            }
+            
+            .header-logo {
+                height: 40px;
+            }
+            
+            .content {
+                margin: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <button class="sidebar-toggle" onclick="toggleSidebar()">☰ Menu</button>
+    <button class="theme-toggle" onclick="toggleTheme()" id="themeToggle">Dark Mode</button>
+    
+    <div class="sidebar-overlay" id="sidebarOverlay" onclick="closeSidebar()"></div>
+    
+    <div class="sidebar" id="sidebar">
+        <h3>Navigation</h3>
+        <ul>
+            <li><a href="index.html" onclick="closeSidebar()">Home</a></li>
+            <li><a onclick="showBlogView(); closeSidebar()">Recent Posts</a></li>
+            <li><a onclick="showArchiveView(); closeSidebar()">Post Archive</a></li>
+            <li><a href="forums.html" onclick="closeSidebar()">Community</a></li>
+        </ul>
+        
+        <h3>Categories</h3>
+        <ul>
+            <li><a onclick="filterPosts('releases'); closeSidebar()">Releases</a></li>
+            <li><a onclick="filterPosts('development'); closeSidebar()">Development</a></li>
+            <li><a onclick="filterPosts('thoughts'); closeSidebar()">Thoughts</a></li>
+            <li><a onclick="filterPosts('all'); closeSidebar()">All Posts</a></li>
+        </ul>
+    </div>
+    
+    <div class="content">
+        <header>
+            <div class="header-logo-title">
+                <img src="K.png" alt="Kunix Logo" class="header-logo" id="logoImg">
+                <h1>Kunix Development Blog</h1>
+            </div>
+            <h2>Updates, releases, and thoughts on OS development</h2>
+        </header>
+        
+        <div class="blog-controls">
+            <button class="view-toggle active" id="blogToggle" onclick="showBlogView()">Recent Posts</button>
+            <button class="view-toggle" id="archiveToggle" onclick="showArchiveView()">Archive</button>
+        </div>
+        
+        <div class="filter-info" id="filterInfo"></div>
+        
+        <main>
+            <div class="blog-view" id="blogView">
+                <div id="blogPosts"></div>
+            </div>
+            
+            <div class="archive-view" id="archiveView">
+                <div id="archiveContent"></div>
+            </div>
+        </main>
+        
+        <footer>
+            <p>&copy; 2025 Klondike Software | <a href="index.html">Back to Kunix Home</a></p>
+        </footer>
+    </div>
+    
+    <script>
+        // Blog posts data - add new posts to the beginning of this array
+        const blogPosts = [
+            {
+                id: 'welcome-blog',
+                title: 'Welcome to the Kunix Development Blog',
+                date: '2025-08-04',
+                category: 'thoughts',
+                excerpt: 'Starting this blog to document the journey of building Kunix, share development updates, and connect with fellow OS enthusiasts.',
+                content: `
+                    <p>Welcome to the official Kunix development blog! This is where I'll be sharing updates about the operating system project, release notes, development thoughts, and hopefully some interesting insights along the way.</p>
+                    
+                    <p>Building an operating system from scratch is quite an undertaking, especially as a single-developer project. But that's exactly what makes it interesting - every decision can be focused and intentional rather than trying to please everyone.</p>
+                    
+                    <p>What you can expect to see here:</p>
+                    <ul>
+                        <li><strong>Development Updates:</strong> Progress reports on kernel development, new features, and milestone achievements</li>
+                        <li><strong>Release Notes:</strong> Detailed information about new versions as they become available</li>
+                        <li><strong>Technical Deep Dives:</strong> Explorations of specific implementation details and design decisions</li>
+                    </ul>
+                    
+                    <p>Thanks for following along with this journey. Feel free to check back regularly for updates as development progresses toward the planned Christmas 2025 alpha release.</p>
+                `
+            }, {
+                id: 'Kunix 0.0.0-b R1',
+                title: 'Kunix 0.0.0-Beta Revision 1',
+                date: '2025-08-04',
+                category: 'release-info-internal',
+                excerpt: 'Release info about the Kunix 0.0.0-Beta Revision 1 internal release',
+                content: `
+                    <p>The Kunix 0.0.0-Beta Revision 1 internal build has been completed, with support for:</p>
+                    
+                    <ul>
+                        <li><strong>32-Bit Custom Bootloader:</strong> A 32-Bit bootloader 'KBoot' (working title). Just loads the kernel.</li>
+                        <li><strong>16 VGA Text Colors:</strong> Support for the full 16 VGA Text Colors.</li>
+                        <li><strong>Keyboard input:</strong> PS/2 Keyboard support.</li>
+                    </ul>
+                    
+                    <p>The project is still in very early stages - right now we're focusing on getting a basic kernel that boots reliably and handles basic I/O. But even small progress feels significant when you're building from the ground up!</p>
+                    
+                    <p>Thanks for following along with this journey. Feel free to check back regularly for updates as development progresses toward the planned Christmas 2025 alpha release.</p>
+                `
+            }
+        ];
+        
+        let currentFilter = 'all';
+        let currentView = 'blog';
+        
+        function formatDate(dateString) {
+            const date = new Date(dateString);
+            return date.toLocaleDateString('en-US', { 
+                year: 'numeric', 
+                month: 'long', 
+                day: 'numeric' 
+            });
+        }
+        
+        function capitalizeFirst(str) {
+            return str.charAt(0).toUpperCase() + str.slice(1);
+        }
+        
+        function renderBlogPosts() {
+            const container = document.getElementById('blogPosts');
+            const filteredPosts = currentFilter === 'all' 
+                ? blogPosts 
+                : blogPosts.filter(post => post.category === currentFilter);
+            
+            if (filteredPosts.length === 0) {
+                container.innerHTML = '<p style="text-align: center; opacity: 0.7;">No posts found in this category.</p>';
+                return;
+            }
+            
+            container.innerHTML = filteredPosts.map(post => `
+                <article class="blog-post" data-category="${post.category}">
+                    <div class="post-header">
+                        <h3 class="post-title">${post.title}</h3>
+                        <div class="post-meta">
+                            ${formatDate(post.date)} • ${capitalizeFirst(post.category)}
+                        </div>
+                    </div>
+                    <div class="post-excerpt">
+                        <p>${post.excerpt}</p>
+                        <span class="read-more" onclick="togglePost('${post.id}')">Read more...</span>
+                    </div>
+                    <div class="post-content" id="content-${post.id}">
+                        ${post.content}
+                        <br><br>
+                        <span class="read-more" onclick="togglePost('${post.id}')">Show less</span>
+                    </div>
+                </article>
+            `).join('');
+            
+            updateFilterInfo();
+        }
+        
+        function renderArchive() {
+            const container = document.getElementById('archiveContent');
+            
+            // Group posts by year
+            const postsByYear = {};
+            blogPosts.forEach(post => {
+                const year = new Date(post.date).getFullYear();
+                if (!postsByYear[year]) {
+                    postsByYear[year] = [];
+                }
+                postsByYear[year].push(post);
+            });
+            
+            // Sort years in descending order
+            const years = Object.keys(postsByYear).sort((a, b) => b - a);
+            
+            if (years.length === 0) {
+                container.innerHTML = '<p style="text-align: center; opacity: 0.7;">No posts available yet.</p>';
+                return;
+            }
+            
+            container.innerHTML = years.map(year => `
+                <div class="year-section">
+                    <h3 class="year-header">${year}</h3>
+                    ${postsByYear[year].map(post => `
+                        <div class="archive-post">
+                            <div class="archive-date">${formatDate(post.date)}</div>
+                            <div class="archive-title" onclick="viewPost('${post.id}')">${post.title}</div>
+                            <div class="archive-excerpt">${post.excerpt}</div>
+                        </div>
+                    `).join('')}
+                </div>
+            `).join('');
+        }
+        
+        function togglePost(postId) {
+            const content = document.getElementById(`content-${postId}`);
+            content.classList.toggle('expanded');
+        }
+        
+        function viewPost(postId) {
+            showBlogView();
+            setTimeout(() => {
+                togglePost(postId);
+                document.getElementById(`content-${postId}`).scrollIntoView({ 
+                    behavior: 'smooth',
+                    block: 'start'
+                });
+            }, 100);
+        }
+        
+        function filterPosts(category) {
+            currentFilter = category;
+            renderBlogPosts();
+            showBlogView();
+        }
+        
+        function updateFilterInfo() {
+            const filterInfo = document.getElementById('filterInfo');
+            if (currentFilter === 'all') {
+                filterInfo.textContent = '';
+            } else {
+                filterInfo.textContent = `Showing posts in category: ${capitalizeFirst(currentFilter)}`;
+            }
+        }
+        
+        function showBlogView() {
+            currentView = 'blog';
+            document.getElementById('blogView').classList.remove('hidden');
+            document.getElementById('archiveView').classList.remove('active');
+            document.getElementById('blogToggle').classList.add('active');
+            document.getElementById('archiveToggle').classList.remove('active');
+            renderBlogPosts();
+        }
+        
+        function showArchiveView() {
+            currentView = 'archive';
+            document.getElementById('blogView').classList.add('hidden');
+            document.getElementById('archiveView').classList.add('active');
+            document.getElementById('blogToggle').classList.remove('active');
+            document.getElementById('archiveToggle').classList.add('active');
+            renderArchive();
+            document.getElementById('filterInfo').textContent = '';
+        }
+        
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('sidebarOverlay');
+            
+            sidebar.classList.toggle('expanded');
+            overlay.classList.toggle('active');
+        }
+        
+        function closeSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('sidebarOverlay');
+            
+            sidebar.classList.remove('expanded');
+            overlay.classList.remove('active');
+        }
+        
+        function toggleTheme() {
+            const body = document.body;
+            const themeToggle = document.getElementById('themeToggle');
+            const logoImg = document.getElementById('logoImg');
+            
+            body.classList.toggle('dark-mode');
+            
+            if (body.classList.contains('dark-mode')) {
+                themeToggle.textContent = 'Light Mode';
+                logoImg.src = 'K(1).png';
+                localStorage.setItem('theme', 'dark');
+            } else {
+                themeToggle.textContent = 'Dark Mode';
+                logoImg.src = 'K.png';
+                localStorage.setItem('theme', 'light');
+            }
+        }
+        
+        // Load saved theme on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            const savedTheme = localStorage.getItem('theme');
+            const themeToggle = document.getElementById('themeToggle');
+            const logoImg = document.getElementById('logoImg');
+            
+            if (savedTheme === 'dark') {
+                document.body.classList.add('dark-mode');
+                themeToggle.textContent = 'Light Mode';
+                logoImg.src = 'K(1).png';
+            }
+            
+            // Initialize the blog view
+            renderBlogPosts();
+        });
+        
+        // Close sidebar when pressing Escape key
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                closeSidebar();
+            }
+        });
+    </script>
+</body>
+</html>
